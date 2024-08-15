@@ -21,36 +21,45 @@ app.get("/auth", (req, res) => {
 });
 
 app.get("/callback", async (req, res) => {
-    const parseRedirect = req.url;
     try {
-        const authResponse = await oauthClient.createToken(parseRedirect);
+        const authResponse = await oauthClient.createToken(req.url);
         const realmId = oauthClient.getToken().realmId;
         console.log('Realm ID (Company ID):', realmId);
         res.redirect('/payments');
     } catch (error) {
-        console.log('Error is ::', error);
+        console.log('Error during OAuth process:', error);
         res.status(500).send('Error during OAuth process');
     }
 });
 
 app.get("/payments", async (req, res) => {
     try {
-        const realmId = oauthClient.getToken().realmId;
+        const token = oauthClient.getToken();
+        const realmId = token.realmId;
         const response = await oauthClient.makeApiCall({
             url: `https://${process.env.ENVIRONMENT}-quickbooks.api.intuit.com/v3/company/${realmId}/query?query=select * from Payment&minorversion=40`,
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token.access_token}`
             }
         });
-        res.json(JSON.parse(response.body));
-        console.log('API Call Response:', response);
+        
+        // Log response body to understand its structure
+        console.log('Response Body:', response.body);
+
+        // Check if the response body is already an object
+        const data = typeof response.body === 'string' ? JSON.parse(response.body) : response.body;
+        
+        // Send JSON response
+        res.json(data);
 
     } catch (error) {
-        console.log("error is::", error);
+        console.log("Error during API call:", error);
         res.status(500).send('Error during API call');
     }
 });
+
 
 app.listen(port, () => {
     console.log(`Server is running on ${port}`);
