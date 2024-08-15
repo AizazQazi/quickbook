@@ -1,9 +1,31 @@
 require('dotenv').config();
 const express = require('express');
 const OAuthClient = require('intuit-oauth');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const csv = require('csv-parser');
 
 const app = express();
 const port = 3000;
+
+// Ensure the uploads directory exists
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Configure multer storage
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadDir); // Use the uploads directory
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+    }
+});
+
+const upload = multer({ storage: storage });
 
 const oauthClient = new OAuthClient({
     clientId: process.env.CLIENT_ID,
@@ -60,6 +82,31 @@ app.get("/payments", async (req, res) => {
     }
 });
 
+app.post('/upload', upload.single('file'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).send('No file uploaded.');
+        }
+
+        console.log('File Uploaded:', req.file);
+
+        // Parse the uploaded CSV file
+        const results = [];
+        fs.createReadStream(req.file.path)
+            .pipe(csv())
+            .on('data', (data) => results.push(data))
+            .on('end', () => {
+                console.log('CSV Data:', results);
+
+                // Here you can process the results, e.g., saving to database or further processing
+                res.send('File uploaded and parsed successfully.');
+            });
+        
+    } catch (error) {
+        console.log('Error during file upload and parsing:', error);
+        res.status(500).send('Error during file upload and parsing');
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server is running on ${port}`);
