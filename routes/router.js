@@ -102,4 +102,63 @@ router.post('/upload', upload.single('file'), (req, res) => {
     }
 });
 
+
+router.put('/deposit', async (req, res) => {
+    console.log("Making deposit");
+    console.log("Request body:", req.body);  // Add this line to debug
+
+    try {
+        const { date, account, category, amount, memo, data_file } = req.body;
+
+        if (!date || !account || !category || !amount || !memo || !data_file) {
+            throw new Error("Missing required fields");
+        }
+
+        // Retrieve OAuth token and realmId (company ID)
+        const token = oauthClient.getToken();
+        const realmId = token.realmId;
+
+        const depositPayload = {
+            "TxnDate": date,
+            "DepositToAccountRef": {
+                "value": account
+            },
+            "Line": [
+                {
+                    "Amount": amount,
+                    "DetailType": "DepositLineDetail",
+                    "DepositLineDetail": {
+                        "AccountRef": {
+                            "value": category
+                        },
+                        "Memo": memo
+                    }
+                }
+            ]
+        };
+
+        const response = await oauthClient.makeApiCall({
+            url: `https://${process.env.ENVIRONMENT}-quickbooks.api.intuit.com/v3/company/${realmId}/deposit`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token.access_token}`
+            },
+            body: JSON.stringify(depositPayload)
+        });
+
+        const data = typeof response.body === 'string' ? JSON.parse(response.body) : response.body;
+        res.status(201).json({
+            message: 'Deposit created successfully',
+            deposit: data
+        });
+
+    } catch (error) {
+        console.error("Error during deposit creation:", error);
+        res.status(500).send('Error during deposit creation');
+    }
+});
+
+
+
 module.exports = router;
