@@ -353,8 +353,6 @@ router.post('/datafiles', async (req, res) => {
     }
 });
 
-
-
 // Dummy Test Endpoint for datafiles
 // router.get('/datafiles', async (req, res) => {
 //     try {
@@ -403,6 +401,50 @@ router.post('/datafiles', async (req, res) => {
 
 
 // Middleware to check if token exists and is valid
+
+router.get('/accounts', async (req, res) => {
+    const { dataFile } = req.query; // Get the selected data file from query parameters
+
+    if (!dataFile) {
+        return res.status(400).json({ error: 'Data file is required' });
+    }
+
+    try {
+        // Retrieve OAuth token and realmId (company ID)
+        const token = await oauthClient.getToken();
+        const realmId = token.realmId;
+
+        // Make the API call to QuickBooks to get all accounts for the selected data file
+        const response = await axios.get(
+            `https://${process.env.ENVIRONMENT}-quickbooks.api.intuit.com/v3/company/${realmId}/query?query=SELECT * FROM Account&minorversion=65`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token.access_token}`
+                }
+            }
+        );
+
+        const accounts = response.data.QueryResponse.Account || [];
+
+        // Filter accounts to only include Bank and Credit Card accounts
+        const filteredAccounts = accounts.filter(account =>
+            account.AccountType === 'Bank' || account.AccountType === 'Credit Card'
+        );
+
+        // Respond with the filtered accounts
+        res.status(200).json({
+            accounts: filteredAccounts.map(account => ({
+                name: account.Name,
+                id: account.Id
+            }))
+        });
+
+    } catch (error) {
+        console.error("Error fetching accounts:", error);
+        res.status(500).json({ error: 'Error fetching accounts' });
+    }
+});
 
 
 function ensureAuthenticated(req, res, next) {
