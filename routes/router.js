@@ -446,6 +446,58 @@ router.get('/accounts', async (req, res) => {
     }
 });
 
+// for categories dropdown
+router.post('/categories', async (req, res) => {
+    // Extract token, realmId, and selected data file from req.body
+    const { accessToken, realmId, dataFiles } = req.body;
+
+    console.log("token is::", accessToken);
+    console.log("realmId is::", realmId);
+    console.log("data file is::", dataFiles)
+
+    // Validate if token, realmId, and dataFile are provided
+    if (!accessToken || !realmId) {
+        return res.status(400).json({ error: 'Token and realmId are required' });
+    }
+    if (!dataFiles) {
+        return res.status(400).json({ error: 'Data file is required' });
+    }
+
+    try {
+        // Make the API call to QuickBooks to get all accounts for the selected data file
+        const response = await axios.get(
+            `https://${process.env.ENVIRONMENT}-quickbooks.api.intuit.com/v3/company/${realmId}/query?query=SELECT * FROM Account&minorversion=65`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}` // Use token from req.body
+                }
+            }
+        );
+
+        const accounts = response.data.QueryResponse.Account || [];
+
+        // Filter accounts to only include Expense and Income accounts
+        const filteredCategories = accounts.filter(account =>
+            ['Expense', 'Income'].includes(account.AccountType)
+        );
+
+        // Map the filtered accounts to include name, id, and account type
+        const categories = filteredCategories.map(account => ({
+            name: account.Name,
+            id: account.Id,
+            type: account.AccountType
+        }));
+
+        // Respond with the filtered expense and income accounts
+        res.status(200).json({ categories });
+
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+        res.status(500).json({ error: 'Error fetching categories' });
+    }
+});
+
 
 function ensureAuthenticated(req, res, next) {
     try {
