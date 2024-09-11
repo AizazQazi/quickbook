@@ -9,7 +9,7 @@ const csv = require('csv-parser');
 const axios = require('axios');
 
 
-// Ensure the uploads directory exists
+// the uploads directory must exists
 const uploadDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
@@ -18,7 +18,7 @@ if (!fs.existsSync(uploadDir)) {
 // Configure multer storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, uploadDir); // Use uploads directory
+        cb(null, uploadDir); // Using uploads directory
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
@@ -50,7 +50,7 @@ router.get('/callback', async (req, res) => {
         // Get OAuth token after authorization
         const authResponse = await oauthClient.createToken(req.url);
         
-        // Get the token from oauthClient
+        
         const token = oauthClient.getToken();
 
         if (!token) {
@@ -201,7 +201,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
 // });
 
 
-// /deposit don't use
+// /deposit don't use just in case + testing endpoint
 router.get('/deposit', async (req, res) => {
     console.log("Making deposit");
 
@@ -274,7 +274,7 @@ router.get('/deposit', async (req, res) => {
 
 router.post('/datafiles', async (req, res) => {
     try {
-        // Extract token and realmId from headers
+        
         const accessToken = req.headers['authorization']?.split(' ')[1]; // Extract Bearer token
         const realmId = req.headers['realmid']; // Extract realmId from headers
 
@@ -298,7 +298,7 @@ router.post('/datafiles', async (req, res) => {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}` // Use token from headers
+                    'Authorization': `Bearer ${accessToken}` 
                 }
             }
         );
@@ -509,7 +509,7 @@ router.get('/accounts', async (req, res) => {
 
 // for categories dropdown
 router.post('/categories', async (req, res) => {
-    // Extract token and realmId from headers
+    
     const accessToken = req.headers['authorization']?.split(' ')[1]; // Extract Bearer token
     const realmId = req.headers['realmid']; // Extract realmId from headers
     const dataFiles = req.body.dataFiles; // Still receive dataFiles from body if needed
@@ -518,7 +518,7 @@ router.post('/categories', async (req, res) => {
     console.log("RealmId is::", realmId);
     console.log("Data file is::", dataFiles);
 
-    // Validate if token and realmId are provided
+    
     if (!accessToken) {
         return res.status(400).json({ error: 'Token is required' });
     }
@@ -555,7 +555,7 @@ router.post('/categories', async (req, res) => {
             type: account.AccountType
         }));
 
-        // Respond with the filtered expense and income accounts
+        
         res.status(200).json({ categories });
 
     } catch (error) {
@@ -565,56 +565,6 @@ router.post('/categories', async (req, res) => {
 });
 
 
-// router.post('/categories', async (req, res) => {
-    
-//     const { accessToken, realmId, dataFiles } = req.body;
-
-//     console.log("token is::", accessToken);
-//     console.log("realmId is::", realmId);
-//     console.log("data file is::", dataFiles)
-
-//     // Validate if token, realmId, and dataFile are provided
-//     if (!accessToken || !realmId) {
-//         return res.status(400).json({ error: 'Token and realmId are required' });
-//     }
-//     if (!dataFiles) {
-//         return res.status(400).json({ error: 'Data file is required' });
-//     }
-
-//     try {
-//         // Make the API call to QuickBooks to get all accounts for the selected data file
-//         const response = await axios.get(
-//             `https://${process.env.ENVIRONMENT}-quickbooks.api.intuit.com/v3/company/${realmId}/query?query=SELECT * FROM Account&minorversion=65`,
-//             {
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     'Authorization': `Bearer ${accessToken}` // Use token from req.body
-//                 }
-//             }
-//         );
-
-//         const accounts = response.data.QueryResponse.Account || [];
-
-//         // Filter accounts to only include Expense and Income accounts
-//         const filteredCategories = accounts.filter(account =>
-//             ['Expense', 'Income'].includes(account.AccountType)
-//         );
-
-//         // Map the filtered accounts to include name, id, and account type
-//         const categories = filteredCategories.map(account => ({
-//             name: account.Name,
-//             id: account.Id,
-//             type: account.AccountType
-//         }));
-
-//         // Respond with the filtered expense and income accounts
-//         res.status(200).json({ categories });
-
-//     } catch (error) {
-//         console.error("Error fetching categories:", error);
-//         res.status(500).json({ error: 'Error fetching categories' });
-//     }
-// });
 
 
 // function ensureAuthenticated(req, res, next) {
