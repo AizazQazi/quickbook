@@ -507,7 +507,6 @@ router.get('/accounts', async (req, res) => {
     }
 });
 
-
 // for categories dropdown
 router.post('/categories', async (req, res) => {
     // Extract token and realmId from headers
