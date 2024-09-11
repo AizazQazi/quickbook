@@ -200,10 +200,8 @@ router.post('/upload', upload.single('file'), (req, res) => {
 //     }
 // });
 
-// dummy route
 
-
-// dummy /deposit
+// /deposit don't use
 router.get('/deposit', async (req, res) => {
     console.log("Making deposit");
 
@@ -273,6 +271,52 @@ router.get('/deposit', async (req, res) => {
 
 
 // Route to get QuickBooks data files
+
+router.post('/datafiles', async (req, res) => {
+    try {
+        // Extract token and realmId from headers
+        const accessToken = req.headers['authorization']?.split(' ')[1]; // Extract Bearer token
+        const realmId = req.headers['realmid']; // Extract realmId from headers
+
+        console.log("Access token is::", accessToken);
+        console.log("Realm ID is::", realmId);
+
+        if (!accessToken) {
+            return res.status(400).json({ error: 'No access token provided' });
+        }
+
+        if (!realmId) {
+            return res.status(400).json({ error: 'No realm ID provided' });
+        }
+
+        const baseURL = process.env.ENVIRONMENT === 'sandbox'
+            ? 'https://sandbox-quickbooks.api.intuit.com'
+            : 'https://quickbooks.api.intuit.com';
+
+        const response = await axios.get(
+            `${baseURL}/v3/company/${realmId}/companyinfo/${realmId}?minorversion=40`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}` // Use token from headers
+                }
+            }
+        );
+
+        if (response.status !== 200) {
+            throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+        }
+
+        res.json({
+            dataFiles: [response.data.CompanyInfo.CompanyName]
+        });
+
+    } catch (error) {
+        console.error("Error fetching QuickBooks data files:", error.message || error);
+        res.status(500).json({ error: `Error fetching QuickBooks data files: ${error.message || error}` });
+    }
+});
+
 // router.get('/datafiles', ensureAuthenticated, async (req, res) => {
 //     try {
 //         // Retrieve OAuth token
@@ -314,64 +358,18 @@ router.get('/deposit', async (req, res) => {
 
 // datafiles endpoint
 
-router.post('/datafiles', async (req, res) => {
-    try {
-        // Extract token and realmId from the request body
-        const { accessToken, realmId } = req.body;
-        console.log("access token is::", accessToken)
-        console.log("id is::", realmId)
-        if (!accessToken) {
-            throw new Error('No access token provided');
-        }
-
-        if (!realmId) {
-            throw new Error('No realm ID provided');
-        }
-
-        const baseURL = process.env.ENVIRONMENT === 'sandbox'
-            ? 'https://sandbox-quickbooks.api.intuit.com'
-            : 'https://quickbooks.api.intuit.com';
-
-        const response = await axios.get(
-            `${baseURL}/v3/company/${realmId}/companyinfo/${realmId}?minorversion=40`,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            }
-        );
-
-        if (response.status !== 200) {
-            throw new Error(`API Error: ${response.status} - ${response.statusText}`);
-        }
-
-        res.json({
-            dataFiles: [response.data.CompanyInfo.CompanyName]
-        });
-
-    } catch (error) {
-        console.error("Error fetching QuickBooks data files:", error.message || error);
-        res.status(500).json({ error: `Error fetching QuickBooks data files: ${error.message || error}` });
-    }
-});
-
-// Dummy Test Endpoint for datafiles
-// router.get('/datafiles', async (req, res) => {
+// router.post('/datafiles', async (req, res) => {
 //     try {
-//         // Token and realmId from your provided data
-//         const token = {
-            // access_token: "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..CWLLNTnkMy7Uw5b9S5c5rA.6zkU8f69h61Fpv0aXvS4kMJtbgYDCiLB7qT4Dw-bWqbZHYUzPo9X3DBh9NdngSwqaJzjLq_NCfIScCfTrfLIXPyPcMq_blP9Efkl-bWq7eDDrHrCRmuUIQTHmK10XfbJKoGJb8BH_Icu6sBeo1N8HICh60r_DodlF_8wkZ-gZLfnjabBfIuh1uO94_447RcickupwiPOPd5i8JjUHdbHWF8w4UFeh3S6g_4zV2dfIOPjLlj5aWpt5VzPjG6GYlVH27yjO5JXd52C5QBH27t8a1hXd0oJEYuVO9S1TalnEJrDsmpnoFvCbxZwilYP6qYTMWWwlDlbIGQ3dGRqZQ9Ybb5lm2hdfuyxcTkpCKh4oMAnhchs9iW3KflUSX6ERhITZkPjYYk8WI2amOunKcpu16Gx2P4zLJ1UUO968gDHRFmKeaZHmmTmQhY75qwnYFmdZWG3J02EUYJU_q4YcMxyY5XyYlKLRVc2uJXq1MIkpov8TsHcCvdZMw-1e64QDRvkQMV-7SHCZq2PEumcMGeWFc0TDiYEbqBbwQARe7yffrq6WTWolRKcsCuSHyfLSY6zh0ww0hNXI6w0Le8vKKTppnfx7tLlndPRfvAsTvzqcnz1szAmpH6kq1yuIK_nzJqzpfLbCP-nZiAq6c-mY65g6isQ3GiO72lgLgk7E4YKSc_7slffrFMHekb77f5uW48IUeqXj8jEIE25UWEFsTFtO-9O_S_gD6ZGbkMvoyf7aHpItoFA70jwpg2B5x0wLR6OWBL1Ng5cS3ZYyh7SP7ltC42gySqq6lYNXTAFzjnQmMs1WHz_PCnjslxvQT50yJody02z1VnKZoBApNOjYCNN8Q.c_d3eaIdG3HfAQCbTjviog",
-            // realmId: "9341452907407238"
-//         };
-
-//         if (!token.access_token) {
-//             throw new Error('No access token available');
+        
+//         const { accessToken, realmId } = req.body;
+//         console.log("access token is::", accessToken)
+//         console.log("id is::", realmId)
+//         if (!accessToken) {
+//             throw new Error('No access token provided');
 //         }
 
-//         const realmId = token.realmId;
 //         if (!realmId) {
-//             throw new Error('No realm ID available');
+//             throw new Error('No realm ID provided');
 //         }
 
 //         const baseURL = process.env.ENVIRONMENT === 'sandbox'
@@ -383,7 +381,7 @@ router.post('/datafiles', async (req, res) => {
 //             {
 //                 headers: {
 //                     'Content-Type': 'application/json',
-//                     'Authorization': `Bearer ${token.access_token}`
+//                     'Authorization': `Bearer ${accessToken}`
 //                 }
 //             }
 //         );
@@ -402,28 +400,82 @@ router.post('/datafiles', async (req, res) => {
 //     }
 // });
 
+// Dummy Test Endpoint for datafiles
 
-// Middleware to check if token exists and is valid
+
+// Dummy Test Endpoint fo accounts
+
+// router.get('/accounts', async (req, res) => {
+//     const { dataFile } = req.query; // Get the selected data file from query parameters
+
+//     if (!dataFile) {
+//         return res.status(400).json({ error: 'Data file is required' });
+//     }
+
+//     try {
+//         // Retrieve OAuth token and realmId (company ID)
+//         const token = await oauthClient.getToken();
+//         const realmId = token.realmId;
+
+//         // Make the API call to QuickBooks to get all accounts for the selected data file
+//         const response = await axios.get(
+//             `https://${process.env.ENVIRONMENT}-quickbooks.api.intuit.com/v3/company/${realmId}/query?query=SELECT * FROM Account&minorversion=65`,
+//             {
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'Authorization': `Bearer ${token.access_token}`
+//                 }
+//             }
+//         );
+
+//         const accounts = response.data.QueryResponse.Account || [];
+
+//         // Filter accounts to only include Bank and Credit Card accounts
+//         const filteredAccounts = accounts.filter(account =>
+//             account.AccountType === 'Bank' || account.AccountType === 'Credit Card'
+//         );
+
+//         // Respond with the filtered accounts
+//         res.status(200).json({
+//             accounts: filteredAccounts.map(account => ({
+//                 name: account.Name,
+//                 id: account.Id
+//             }))
+//         });
+
+//     } catch (error) {
+//         console.error("Error fetching accounts:", error);
+//         res.status(500).json({ error: 'Error fetching accounts' });
+//     }
+// });
 
 router.get('/accounts', async (req, res) => {
-    const { dataFile } = req.query; // Get the selected data file from query parameters
+    const { dataFile } = req.query; 
+    const authHeader = req.headers['authorization'];
+    const realmId=req.headers['realmid']
 
+
+    console.log("token received is::", authHeader)
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Invalid or missing token' });
+    }
+
+    const token = authHeader.split(' ')[1]; 
+    console.log("token after split is::", token)
     if (!dataFile) {
         return res.status(400).json({ error: 'Data file is required' });
     }
 
+    
     try {
-        // Retrieve OAuth token and realmId (company ID)
-        const token = await oauthClient.getToken();
-        const realmId = token.realmId;
-
-        // Make the API call to QuickBooks to get all accounts for the selected data file
+       
         const response = await axios.get(
             `https://${process.env.ENVIRONMENT}-quickbooks.api.intuit.com/v3/company/${realmId}/query?query=SELECT * FROM Account&minorversion=65`,
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token.access_token}`
+                    'Authorization': `Bearer ${token}`
                 }
             }
         );
@@ -435,7 +487,6 @@ router.get('/accounts', async (req, res) => {
             account.AccountType === 'Bank' || account.AccountType === 'Credit Card'
         );
 
-        // Respond with the filtered accounts
         res.status(200).json({
             accounts: filteredAccounts.map(account => ({
                 name: account.Name,
@@ -445,22 +496,35 @@ router.get('/accounts', async (req, res) => {
 
     } catch (error) {
         console.error("Error fetching accounts:", error);
+
+        // Checking for specific error response from QuickBooks API
+        if (error.response) {
+            const { status, statusText, data } = error.response;
+            return res.status(status).json({ error: statusText, details: data });
+        }
+
         res.status(500).json({ error: 'Error fetching accounts' });
     }
 });
 
+
 // for categories dropdown
 router.post('/categories', async (req, res) => {
-    // Extract token, realmId, and selected data file from req.body
-    const { accessToken, realmId, dataFiles } = req.body;
+    // Extract token and realmId from headers
+    const accessToken = req.headers['authorization']?.split(' ')[1]; // Extract Bearer token
+    const realmId = req.headers['realmid']; // Extract realmId from headers
+    const dataFiles = req.body.dataFiles; // Still receive dataFiles from body if needed
 
-    console.log("token is::", accessToken);
-    console.log("realmId is::", realmId);
-    console.log("data file is::", dataFiles)
+    console.log("Token is::", accessToken);
+    console.log("RealmId is::", realmId);
+    console.log("Data file is::", dataFiles);
 
-    // Validate if token, realmId, and dataFile are provided
-    if (!accessToken || !realmId) {
-        return res.status(400).json({ error: 'Token and realmId are required' });
+    // Validate if token and realmId are provided
+    if (!accessToken) {
+        return res.status(400).json({ error: 'Token is required' });
+    }
+    if (!realmId) {
+        return res.status(400).json({ error: 'Realm ID is required' });
     }
     if (!dataFiles) {
         return res.status(400).json({ error: 'Data file is required' });
@@ -473,7 +537,7 @@ router.post('/categories', async (req, res) => {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}` // Use token from req.body
+                    'Authorization': `Bearer ${accessToken}` // Use token from headers
                 }
             }
         );
@@ -502,58 +566,84 @@ router.post('/categories', async (req, res) => {
 });
 
 
-function ensureAuthenticated(req, res, next) {
-    try {
-        const token = oauthClient.getToken();
-        if (!token) {
-            return res.status(401).json({ error: 'Not authenticated. Please log in through /auth.' });
-        }
+// router.post('/categories', async (req, res) => {
+    
+//     const { accessToken, realmId, dataFiles } = req.body;
 
-        if (token.isExpired()) {
-            // Refresh token logic if token is expired
-            oauthClient.refresh()
-                .then(authResponse => {
-                    console.log('Token refreshed successfully.');
-                    next(); // Proceed after refreshing token
-                })
-                .catch(error => {
-                    console.error('Token refresh failed:', error);
-                    return res.status(401).json({ error: 'Failed to refresh token. Please log in through /auth.' });
-                });
-        } else {
-            next();
-        }
-    } catch (error) {
-        return res.status(500).json({ error: `Error checking authentication: ${error.message}` });
-    }
-}
+//     console.log("token is::", accessToken);
+//     console.log("realmId is::", realmId);
+//     console.log("data file is::", dataFiles)
+
+//     // Validate if token, realmId, and dataFile are provided
+//     if (!accessToken || !realmId) {
+//         return res.status(400).json({ error: 'Token and realmId are required' });
+//     }
+//     if (!dataFiles) {
+//         return res.status(400).json({ error: 'Data file is required' });
+//     }
+
+//     try {
+//         // Make the API call to QuickBooks to get all accounts for the selected data file
+//         const response = await axios.get(
+//             `https://${process.env.ENVIRONMENT}-quickbooks.api.intuit.com/v3/company/${realmId}/query?query=SELECT * FROM Account&minorversion=65`,
+//             {
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'Authorization': `Bearer ${accessToken}` // Use token from req.body
+//                 }
+//             }
+//         );
+
+//         const accounts = response.data.QueryResponse.Account || [];
+
+//         // Filter accounts to only include Expense and Income accounts
+//         const filteredCategories = accounts.filter(account =>
+//             ['Expense', 'Income'].includes(account.AccountType)
+//         );
+
+//         // Map the filtered accounts to include name, id, and account type
+//         const categories = filteredCategories.map(account => ({
+//             name: account.Name,
+//             id: account.Id,
+//             type: account.AccountType
+//         }));
+
+//         // Respond with the filtered expense and income accounts
+//         res.status(200).json({ categories });
+
+//     } catch (error) {
+//         console.error("Error fetching categories:", error);
+//         res.status(500).json({ error: 'Error fetching categories' });
+//     }
+// });
 
 
-function ensureAuthenticated(req, res, next) {
-    try {
-        const token = oauthClient.getToken();
-        if (!token) {
-            return res.status(401).json({ error: 'Not authenticated. Please log in through /auth.' });
-        }
+// function ensureAuthenticated(req, res, next) {
+//     try {
+//         const token = oauthClient.getToken();
+//         if (!token) {
+//             return res.status(401).json({ error: 'Not authenticated. Please log in through /auth.' });
+//         }
 
-        if (token.isExpired()) {
-            // Refresh token logic if token is expired
-            oauthClient.refresh()
-                .then(authResponse => {
-                    console.log('Token refreshed successfully.');
-                    next(); // Proceed after refreshing token
-                })
-                .catch(error => {
-                    console.error('Token refresh failed:', error);
-                    return res.status(401).json({ error: 'Failed to refresh token. Please log in through /auth.' });
-                });
-        } else {
-            next();
-        }
-    } catch (error) {
-        return res.status(500).json({ error: 'Error checking authentication' });
-    }
-}
+//         if (token.isExpired()) {
+//             // Refresh token logic if token is expired
+//             oauthClient.refresh()
+//                 .then(authResponse => {
+//                     console.log('Token refreshed successfully.');
+//                     next(); // Proceed after refreshing token
+//                 })
+//                 .catch(error => {
+//                     console.error('Token refresh failed:', error);
+//                     return res.status(401).json({ error: 'Failed to refresh token. Please log in through /auth.' });
+//                 });
+//         } else {
+//             next();
+//         }
+//     } catch (error) {
+//         return res.status(500).json({ error: `Error checking authentication: ${error.message}` });
+//     }
+// }
+
 
 
 module.exports = router;
