@@ -1,0 +1,117 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "quick",
+    "collectionId": "7d8f5f40-f8d2-400f-8a26-f62af7f69c28",
+    "dateExported": "2024-09-11T09:47:11.650Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "58b502cc-d667-4aab-9569-e26b966dd97f",
+            "colId": "7d8f5f40-f8d2-400f-8a26-f62af7f69c28",
+            "containerId": "",
+            "name": "http://localhost:3000/",
+            "url": "http://localhost:3000/auth",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-09-10T03:58:44.005Z",
+            "modified": "2024-09-10T03:58:44.005Z",
+            "headers": []
+        },
+        {
+            "_id": "5ad275e1-fac5-45a0-976a-85426f5699d1",
+            "colId": "7d8f5f40-f8d2-400f-8a26-f62af7f69c28",
+            "containerId": "",
+            "name": "http://localhost:3000/upload",
+            "url": "http://localhost:3000/upload",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-09-10T03:59:00.581Z",
+            "modified": "2024-09-10T03:59:00.581Z",
+            "headers": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [],
+                "files": [
+                    {
+                        "name": "file",
+                        "value": "c:\\Users\\Aizaz\\Desktop\\file.csv"
+                    }
+                ]
+            }
+        },
+        {
+            "_id": "d1b5f8d7-b9df-45ef-ae6f-aac2ca6f78ec",
+            "colId": "7d8f5f40-f8d2-400f-8a26-f62af7f69c28",
+            "containerId": "",
+            "name": "http://localhost:3000/accounts",
+            "url": "http://localhost:3000/accounts?dataFile=Sandbox%20Company_US_1",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2024-09-10T09:05:23.766Z",
+            "modified": "2024-09-11T03:37:16.437Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "\"eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..JxgftL1E85eBjdhkQGBjvQ.PO-4PdndI-6nt4TiI50cQGTghc2YTONKeTOFf4J7hv2N4t9OSSLJ4jlTQogLWlQnf7OOIxhlFHsnutZBwFNMZvOSS_73Iu2S7kyiyERL_7fV19oXZCR-X6GUkwZAEZFe9qlC2oMaq7_4XAUbvVoGrZrIC40Ra3gotM1O2e_w2KqTqrpXECcxS2kiem2YH-A6zKLFW6l0WBAviYlrgjKXWDDpxKOQnEFdRiKvgjI9OHOfGBfH5G2Ih2BpCoi03OPu-G1_-RfCfcNPiBNwt5XPocky1TEsOMCwC0SLKTN3xg_L1KMaeDHobXsrA2i7V38DpQLJ1oghiYPQHQ3vQvZshbr2SD6N3_Yk7yTRMwIkdd2Zs8E1eCrmml6aPHA4yi45VNB_qaXRO3jq6Ko8zIx7Jx2xnqRRhy6anUNTp5lI-oBcWlkA2dz0PQzB2_fbgL7opoIQBs_XGs_RU2y9NtORxES2gv3adgvpzP8gGOacEs0xQKi0VJz6JqbSWYCtczwh742bZeLdvVM5xEYaVl_MX4VROV17QW_8JD3ghrx83ELemYhr3Ap-xpqFTAvmxVZD4NANvsLomOGK1Z16IWoxAG345ecj43imYLbhH0tmeUA-bBAnzoJ5MdckZyBnCwRP58-bFTWuoMsmW9-2j9a17BXA2inkhn4KWdKq4f6EKm7rhA3TZ3OM5r3KO26_VDVY0TR6RnB4WkVhDgiHl1wH1ohU5RrqVOmDoJ2VtimoMZMetwOkLX2kICT7hRPW9kYWv1v57NUDjhqdQFvlDTk1oVHpll0QikJYUdqc5cnma3ssA6T90nFebIbph4qSETmPuYNO6SYrCBVAcK3Qdx7x6A.Pl7j1-YvjSp3NNf4dD4tMg\",\"refreshToken\":\"AB11734752218OXq73jJAtOzAdxUkFd1FFOwUKXUunafjyUvK0\""
+                }
+            ],
+            "params": [
+                {
+                    "name": "dataFile",
+                    "value": "Sandbox%20Company_US_1",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "d0be7e20-fe4f-4e24-9e35-3759e84d1214",
+            "colId": "7d8f5f40-f8d2-400f-8a26-f62af7f69c28",
+            "containerId": "",
+            "name": "http://localhost:3000/datafiles",
+            "url": "http://localhost:3000/datafiles",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2024-09-10T09:06:06.932Z",
+            "modified": "2024-09-11T09:44:41.232Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..kV1JL8TOCH70fmKDNLXEQA.TX7R96vyfEO1JE0QFUHWZo5SkBLZfndSokCBmMm3-SPMECvY2dmL87ZKqsDUG_ElA59Re6uvRFgr-Ac2KU9bo_un3zcGEVE8QaUhg8cfC_iBDtzR3HRZKSxAniWr4jeh0yBbQuwjegoP2bxVjscri_APi66b5bZK6HrWn1m4jf0pYdrumkPYZTB2iR8xQKGPUfenUBRZO3d24dIFvE1AWbPrE22YrPNTcfykAjunJEQ4K6nU-In9JdxihyMcximIqXSg_-CpbGioNf5aWs9SxrZF_SOg-RNZ3ftYmnV0h_1EvNKkwHBAfTlfjh6hc-6QGWpZBZl2R5L67_agKG3ACCUNlzy2za6Zq9hdy_-pzbOUdoUu94UtGOvi9sa-sUpnG7I2X-AhqSWkY2q8Hdq5msTA_MdPi0hhilBfy-zhIIINDGeL8tYm3SCVDzPsISH0dmX6p_TXJZdQyh0m83NHNxNQj1o74KSR0-tj5kl0bOAGzcK-y6lh9wN9H0z0rOJSmWwptl53Yfgpv1C79GYGJ2_3r6nihT8zm2mGcM07ymuFBeQlu99sVDO0vem82d1rqJ7lQZJ-A6zyCGlibJSEnRPeSSlugiMXtYTJj7Qza_ZSgCaXaBQLa1hbe7Mt1iAPgFjGgzliyfiu64Kv5G0CuuJWh3Psd5gS86GY4-Q5WM3b4vwNlDI2ZhK39pPlx98LAjyheOPZ5sUIRngTWCJlKd6QOTVk7e7BJMxJZF4B5dDn5noHmWUNnkDPM4ZBib3hvMP2xxowObQ_1-Bj7AJ2WOip3BxhG6gkIEi8XMscXQpDL9VQ4ix2BWdIrEwJG9DvHZPS7FJIvXQWiEpPKYGvcA.ICZjvNTVIe-jA5k4B87e_w"
+                },
+                {
+                    "name": "realmid",
+                    "value": "9341452907407238"
+                }
+            ]
+        },
+        {
+            "_id": "1e023500-af35-47d3-b0cc-89c8eec42399",
+            "colId": "7d8f5f40-f8d2-400f-8a26-f62af7f69c28",
+            "containerId": "",
+            "name": "/categories",
+            "url": "http://localhost:3000/categories",
+            "method": "POST",
+            "sortNum": 60000,
+            "created": "2024-09-11T03:59:40.413Z",
+            "modified": "2024-09-11T09:40:37.773Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..kV1JL8TOCH70fmKDNLXEQA.TX7R96vyfEO1JE0QFUHWZo5SkBLZfndSokCBmMm3-SPMECvY2dmL87ZKqsDUG_ElA59Re6uvRFgr-Ac2KU9bo_un3zcGEVE8QaUhg8cfC_iBDtzR3HRZKSxAniWr4jeh0yBbQuwjegoP2bxVjscri_APi66b5bZK6HrWn1m4jf0pYdrumkPYZTB2iR8xQKGPUfenUBRZO3d24dIFvE1AWbPrE22YrPNTcfykAjunJEQ4K6nU-In9JdxihyMcximIqXSg_-CpbGioNf5aWs9SxrZF_SOg-RNZ3ftYmnV0h_1EvNKkwHBAfTlfjh6hc-6QGWpZBZl2R5L67_agKG3ACCUNlzy2za6Zq9hdy_-pzbOUdoUu94UtGOvi9sa-sUpnG7I2X-AhqSWkY2q8Hdq5msTA_MdPi0hhilBfy-zhIIINDGeL8tYm3SCVDzPsISH0dmX6p_TXJZdQyh0m83NHNxNQj1o74KSR0-tj5kl0bOAGzcK-y6lh9wN9H0z0rOJSmWwptl53Yfgpv1C79GYGJ2_3r6nihT8zm2mGcM07ymuFBeQlu99sVDO0vem82d1rqJ7lQZJ-A6zyCGlibJSEnRPeSSlugiMXtYTJj7Qza_ZSgCaXaBQLa1hbe7Mt1iAPgFjGgzliyfiu64Kv5G0CuuJWh3Psd5gS86GY4-Q5WM3b4vwNlDI2ZhK39pPlx98LAjyheOPZ5sUIRngTWCJlKd6QOTVk7e7BJMxJZF4B5dDn5noHmWUNnkDPM4ZBib3hvMP2xxowObQ_1-Bj7AJ2WOip3BxhG6gkIEi8XMscXQpDL9VQ4ix2BWdIrEwJG9DvHZPS7FJIvXQWiEpPKYGvcA.ICZjvNTVIe-jA5k4B87e_w"
+                },
+                {
+                    "name": "realmid",
+                    "value": "9341452907407238"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"dataFiles\": \"Sandbox Company_US_1\"\n}",
+                "form": []
+            }
+        }
+    ],
+    "ref": "gBaE5oO5NN56segDO7OibUCVMyblaYW1HZ1CZWN2DSSInQzHcSiv1Y6-XxZZDWqkzrsVVoX7J1MRcxBi2Trq9Q"
+}
