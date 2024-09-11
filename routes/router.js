@@ -201,6 +201,9 @@ router.post('/upload', upload.single('file'), (req, res) => {
 // });
 
 // dummy route
+
+
+// dummy /deposit
 router.get('/deposit', async (req, res) => {
     console.log("Making deposit");
 
@@ -269,7 +272,7 @@ router.get('/deposit', async (req, res) => {
 });
 
 
-// Route to get QuickBooks data files (or realms in case of QuickBooks Online)
+// Route to get QuickBooks data files
 // router.get('/datafiles', ensureAuthenticated, async (req, res) => {
 //     try {
 //         // Retrieve OAuth token
