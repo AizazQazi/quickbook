@@ -2,12 +2,6 @@ const express = require('express');
 const router = express.Router();
 const qb_registrytab=require('../controllers/qb_registry tab controller')
 
-// const paymentController = require('../controllers/paymentController');
-// const datafiles_Controller = require('../controllers/datafiles_controller');
-// const accountController = require('../controllers/accountController');
-// const authController = require('../controllers/authController');
-// const depositController = require('../controllers/depositController');
-// const fileController = require('../controllers/fileController');
 const multer = require('multer');
 
 
