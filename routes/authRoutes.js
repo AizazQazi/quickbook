@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const authController = require('../controllers/authController');
+// const express = require('express');
+// const router = express.Router();
+// const authController = require('../controllers/authController');
 
-router.get('/auth', authController.auth);
-router.get('/callback', authController.callback);
+// router.get('/auth', authController.auth);
+// router.get('/callback', authController.callback);
 
-module.exports = router;
+// module.exports = router;
