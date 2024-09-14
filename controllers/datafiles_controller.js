@@ -1,14 +1,10 @@
 const axios = require('axios');
 const quickBooksService = require('../services/quickBooksService');
 
-exports.datafiles= async(req,res)=>{
+exports.datafiles = async (req, res) => {
     try {
-        
-        const accessToken = req.headers['authorization']?.split(' ')[1]; // Extract Bearer token
-        const realmId = req.headers['realmid']; // Extract realmId from headers
-
-        console.log("Access token is::", accessToken);
-        console.log("Realm ID is::", realmId);
+        const accessToken = req.headers['authorization']?.split(' ')[1];
+        const realmId = req.headers['realmid'];
 
         if (!accessToken) {
             return res.status(400).json({ error: 'No access token provided' });
@@ -27,22 +23,21 @@ exports.datafiles= async(req,res)=>{
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}` 
+                    'Authorization': `Bearer ${accessToken}`
                 }
             }
         );
 
-        if (response.status !== 200) {
+        if (response.status === 200) {
+            res.json({
+                dataFiles: [response.data.CompanyInfo.CompanyName]
+            });
+        } else {
             throw new Error(`API Error: ${response.status} - ${response.statusText}`);
         }
 
-        res.json({
-            dataFiles: [response.data.CompanyInfo.CompanyName]
-        });
-
     } catch (error) {
-        console.error("Error fetching QuickBooks data files:", error.message || error);
-        res.status(500).json({ error: `Error fetching QuickBooks data files: ${error.message || error}` });
-    } 
-
-}
+        console.error("Error fetching QuickBooks data files:", error.response?.data || error.message || error);
+        res.status(500).json({ error: `Error fetching QuickBooks data files: ${error.response?.data?.fault?.error[0]?.message || error.message || error}` });
+    }
+};
