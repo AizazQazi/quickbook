@@ -1,20 +1,26 @@
-require('dotenv').config();
 const express = require('express');
 const app = express();
-const port = 3000;
+require('dotenv').config();
+const authRoutes = require('./routes/authRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const fileRoutes = require('./routes/fileRoutes');
+const depositRoutes = require('./routes/depositRoutes');
+const accountRoutes = require('./routes/accountRoutes');
+const datafiles=require('./routes/datafiles_route');
 
-// Middleware to parse JSON bodies
 app.use(express.json());
 
+// const routes= require('./routes/router')
+// app.use(routes);
 
-// Import routes
-const routes = require('./routes/router');
+app.use('/', authRoutes);
+app.use('/', paymentRoutes);
+app.use('/', fileRoutes);
+app.use('/', depositRoutes);
+app.use('/', accountRoutes);
+app.use('/', datafiles);
 
-// Use routes
-app.use(routes);
-
-
-
-app.listen(port, () => {
-    console.log(`Server is running on ${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
